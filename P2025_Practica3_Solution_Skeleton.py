@@ -113,14 +113,36 @@ def calcular_sha256(message):
 
 def segona_preimatge(message):
     """
-    This function is intended to find a second preimage for a given message.
-    Finding a second preimage for a strong cryptographic hash function like SHA-256
-    is computationally infeasible. This function will conceptually demonstrate the idea
-    but will not practically find a second preimage for non-trivial inputs.
-    It's essentially a placeholder to illustrate the concept.
+    Attempts to find a second preimage for the given message's hash within 1,000,000 iterations.
+    This function demonstrates the concept but will not practically find a preimage for SHA-256.
+    
+    message: The original message (integer or string) whose hash we want to find a second preimage for.
+    
+    Returns a different message (the second preimage) if found, otherwise None.
     """
-    # In a real-world scenario, finding a second preimage for SHA-256 is practically impossible.
-    return None
+    target_hash = calcular_sha256(message)
+    
+    MAX_ITERATIONS = 1000000
+    # Assume a standard bit length for random candidates, related to SHA-256 output size.
+    # This addresses the "numero de bits" requirement conceptually without changing the signature.
+    CANDIDATE_BIT_LENGTH = 256 
+
+
+    for i in range(MAX_ITERATIONS):
+        # Generate a random integer as a candidate message
+        candidate_message = random.getrandbits(CANDIDATE_BIT_LENGTH)
+
+        # Ensure the candidate is not the original message itself (unless message is a string, then it won't be equal)
+        # We need to ensure we're finding a *different* message.
+        if isinstance(message, int) and candidate_message == message:
+            continue
+        
+        candidate_hash = calcular_sha256(candidate_message)
+        
+        if candidate_hash == target_hash:
+            return candidate_message # Return the found message
+            
+    return None # Return None if no second preimage is found
 
 if __name__ == '__main__':
     length = 1024  # Longitud de les claus en bits
